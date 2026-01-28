@@ -34,9 +34,6 @@ class AdminProfileController extends Controller
 
         $fotoPath = $admin->foto_admin; 
 
-        /* =========================
-           UPLOAD FOTO BARU
-        ========================= */
         if ($request->hasFile('foto')) {
 
             if ($fotoPath && file_exists(public_path('storage/' . $fotoPath))) {
@@ -56,19 +53,11 @@ class AdminProfileController extends Controller
 
             $fotoPath = 'admin/' . $filename;
         }
-
-        /* =========================
-           UPDATE DATABASE
-        ========================= */
         DB::table('admin')->where('id_admin', $adminId)->update([
             'nama_admin' => $request->nama_admin,
             'username'   => $request->username,
             'foto_admin' => $fotoPath,
         ]);
-
-        /* =========================
-           UPDATE SESSION
-        ========================= */
         session([
             'admin_nama'     => $request->nama_admin,
             'admin_username' => $request->username,

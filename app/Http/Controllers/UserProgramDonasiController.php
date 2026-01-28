@@ -25,10 +25,10 @@ class UserProgramDonasiController extends Controller
             'gambar'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        
         $pathGambar = null;
         if ($request->hasFile('gambar')) {
-            $pathGambar = $request->file('gambar')->store('program-donasi', 'public');
+            $pathGambar = $request->file('gambar')
+                ->store('program-donasi', 'public');
         }
 
         $cols = Schema::getColumnListing('program_donasi');
@@ -40,74 +40,62 @@ class UserProgramDonasiController extends Controller
             return null;
         };
 
-       
-        $colJudul      = $pick(['nama_program', 'judul', 'judul_program', 'title', 'nama']);
-        $colDeskripsi  = $pick(['deskripsi', 'description', 'detail', 'keterangan']);
-        $colTarget     = $pick(['target_dana', 'target_donasi', 'target', 'nominal_target']);
-        $colTglMulai   = $pick(['tanggal_mulai', 'tgl_mulai', 'start_date']);
-        $colTglSelesai = $pick(['tanggal_selesai', 'tgl_selesai', 'deadline', 'end_date']);
-        $colFoto       = $pick(['foto', 'gambar', 'cover', 'image']);
-        $colStatus     = $pick(['status_program', 'status', 'publikasi', 'is_active']);
-        $colIdAdmin    = $pick(['id_admin']);
-        $colKategori   = $pick(['kategori', 'category']);
-        $colUserId     = $pick(['user_id']); 
+        $colJudul      = $pick(['judul', 'nama_program', 'judul_program']);
+        $colDeskripsi  = $pick(['deskripsi']);
+        $colTarget     = $pick(['target_donasi', 'target_dana']);
+        $colKategori   = $pick(['kategori']);
+        $colTglMulai   = $pick(['tanggal_mulai']);
+        $colTglSelesai = $pick(['tanggal_selesai']);
+        $colFoto       = $pick(['gambar', 'foto']);
+        $colStatus     = $pick(['status', 'status_program']);
+        $colUserId     = $pick(['user_id', 'id_user', 'created_by']);
+        $colAdminId    = $pick(['id_admin']);
 
-    
         if (!$colJudul || !$colDeskripsi || !$colTarget) {
-            abort(500, 'Kolom inti (judul/deskripsi/target) tidak ditemukan di tabel program_donasi.');
+            abort(500, 'Kolom inti tidak ditemukan di tabel program_donasi.');
         }
 
-        $payload = [];
-        $payload[$colJudul] = $data['judul'];
-        $payload[$colDeskripsi] = $data['deskripsi'];
-        $payload[$colTarget] = $data['target_donasi'];
+        $payload = [
+            $colJudul     => $data['judul'],
+            $colDeskripsi => $data['deskripsi'],
+            $colTarget    => $data['target_donasi'],
+        ];
 
-        if ($colKategori) {
-            $payload[$colKategori] = $data['kategori'] ?? null;
-        }
-
-       
-        if ($colUserId) {
-            $payload[$colUserId] = auth()->id();
-        }
-
-       
-        if ($colTglMulai) {
-            $payload[$colTglMulai] = date('Y-m-d');
-        }
-
-        
-        if ($colTglSelesai) {
-            $payload[$colTglSelesai] = $data['tanggal_selesai'] ?? date('Y-m-d', strtotime('+30 days'));
-        }
-
-        
-        if ($colFoto) {
-            $payload[$colFoto] = $pathGambar;
-        }
-
-        
-        if ($colStatus) {
-            $payload[$colStatus] = ($colStatus === 'is_active') ? 0 : 'pending';
-        }
-
-        
-        if ($colIdAdmin) {
-            $payload[$colIdAdmin] = 1;
-        }
+        if ($colKategori)   $payload[$colKategori] = $data['kategori'];
+        if ($colUserId)     $payload[$colUserId]   = auth()->id();
+        if ($colTglMulai)   $payload[$colTglMulai] = now()->toDateString();
+        if ($colTglSelesai) $payload[$colTglSelesai] =
+            $data['tanggal_selesai'] ?? now()->addDays(30)->toDateString();
+        if ($colFoto)       $payload[$colFoto] = $pathGambar;
+        if ($colStatus)     $payload[$colStatus] = 'pending';
+        if ($colAdminId)    $payload[$colAdminId] = 1;
 
         ProgramDonasi::create($payload);
 
         return redirect()
             ->route('user.program_donasi.create')
-            ->with('success', 'Program donasi berhasil dibuat. Menunggu verifikasi admin.');
+            ->with('success', 'Program berhasil dibuat dan menunggu verifikasi admin.');
     }
 
-    
     public function riwayat()
     {
+        $cols = Schema::getColumnListing('program_donasi');
+
+        $pick = function (array $candidates) use ($cols) {
+            foreach ($candidates as $c) {
+                if (in_array($c, $cols)) return $c;
+            }
+            return null;
+        };
+
+        $colUserId = $pick(['user_id', 'id_user', 'created_by']);
+
+        if (!$colUserId) {
+            abort(500, 'Kolom user_id tidak ditemukan untuk riwayat program.');
+        }
+
         $programs = ProgramDonasi::with('donasi')
-            ->where('user_id', auth()->id())
+            ->where($colUserId, auth()->id())
             ->orderByDesc('id_program')
             ->get();
 

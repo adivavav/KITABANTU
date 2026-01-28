@@ -9,11 +9,6 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | DASHBOARD
-    |--------------------------------------------------------------------------
-    */
     public function dashboard()
 {
     return view('admin.dashboard', [
@@ -30,11 +25,6 @@ class AdminController extends Controller
     ]);
 }
 
-    /*
-    |--------------------------------------------------------------------------
-    | LIST + FORM ADMIN (SATU HALAMAN)
-    |--------------------------------------------------------------------------
-    */
     public function index()
     {
         $admin = Admin::orderBy('id_admin', 'desc')->paginate(10);
@@ -42,11 +32,6 @@ class AdminController extends Controller
         return view('admin.admin', compact('admin'));
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | SIMPAN ADMIN (CREATE)
-    |--------------------------------------------------------------------------
-    */
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -63,12 +48,6 @@ class AdminController extends Controller
             ->route('admin.admin')
             ->with('success', 'Admin berhasil ditambahkan');
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | UPDATE ADMIN
-    |--------------------------------------------------------------------------
-    */
     public function update(Request $request, $id)
     {
         $admin = Admin::findOrFail($id);
@@ -92,11 +71,6 @@ class AdminController extends Controller
             ->with('success', 'Admin berhasil diperbarui');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | DELETE ADMIN
-    |--------------------------------------------------------------------------
-    */
    public function destroy($id)
 {
     $admin = Admin::findOrFail($id);

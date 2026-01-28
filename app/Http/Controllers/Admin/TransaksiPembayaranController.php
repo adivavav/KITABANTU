@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class TransaksiPembayaranController extends Controller
 {
-    // =====================
-    // VIEW
-    // =====================
     public function index()
     {
         $donasi = Donasi::orderByDesc('id_donasi')->get();
@@ -22,9 +19,6 @@ class TransaksiPembayaranController extends Controller
         return view('admin.transaksi_pembayaran', compact('donasi','metode'));
     }
 
-    // =====================
-    // DATA (AJAX)
-    // =====================
     public function data()
     {
         return response()->json(
@@ -34,9 +28,6 @@ class TransaksiPembayaranController extends Controller
         );
     }
 
-    // =====================
-    // CREATE
-    // =====================
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -51,9 +42,6 @@ class TransaksiPembayaranController extends Controller
         return response()->json(['message'=>'Transaksi berhasil ditambahkan']);
     }
 
-    // =====================
-    // UPDATE
-    // =====================
     public function update(Request $request, $id)
     {
         $trx = TransaksiPembayaran::findOrFail($id);
@@ -69,18 +57,12 @@ class TransaksiPembayaranController extends Controller
         return response()->json(['message'=>'Transaksi berhasil diupdate']);
     }
 
-    // =====================
-    // DELETE
-    // =====================
     public function destroy($id)
     {
         TransaksiPembayaran::findOrFail($id)->delete();
         return response()->json(['message'=>'Transaksi berhasil dihapus']);
     }
 
-    // =====================
-    // KONFIRMASI DONASI
-    // =====================
     public function konfirmasi($id_donasi)
     {
         DB::beginTransaction();

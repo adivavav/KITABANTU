@@ -11,18 +11,16 @@ use Illuminate\Http\Request;
 
 class DonasiController extends Controller
 {
-    // HALAMAN
     public function index()
 {
     $donatur = Donatur::orderBy('nama_donatur')->get();
-    $program = ProgramDonasi::orderBy('id_program','desc')->get(); // FIX
+    $program = ProgramDonasi::orderBy('id_program','desc')->get(); 
     $metode  = MetodePembayaran::all();
 
     return view('admin.donasi', compact('donatur','program','metode'));
 }
 
 
-    // DATA (AJAX)
     public function data()
     {
         return response()->json(
@@ -32,7 +30,6 @@ class DonasiController extends Controller
         );
     }
 
-    // TAMBAH DONASI
     public function store(Request $request)
     {
         $request->validate([
@@ -55,7 +52,6 @@ class DonasiController extends Controller
         return response()->json(['message'=>'Donasi berhasil ditambahkan']);
     }
 
-    // EDIT STATUS
     public function update(Request $request, $id)
     {
         Donasi::findOrFail($id)->update([
@@ -65,7 +61,6 @@ class DonasiController extends Controller
         return response()->json(['message'=>'Status donasi diupdate']);
     }
 
-    // HAPUS
     public function destroy($id)
     {
         Donasi::findOrFail($id)->delete();

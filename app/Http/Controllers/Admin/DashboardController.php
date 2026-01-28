@@ -13,9 +13,6 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // ==========================
-        // BOX ATAS
-        // ==========================
         $totalDonatur = Donatur::count();
         $totalAdmin   = Admin::count();
         $totalProgram = ProgramDonasi::count();
@@ -23,32 +20,20 @@ class DashboardController extends Controller
         $totalDonasi = Donasi::whereIn('status_donasi', ['sukses', 'berhasil'])
             ->sum('jumlah_donasi');
 
-        // ==========================
-        // DONASI TERBESAR
-        // ==========================
         $donasiTerbesar = Donasi::with(['donatur','program'])
             ->whereIn('status_donasi', ['sukses','berhasil'])
             ->orderByDesc('jumlah_donasi')
             ->limit(10)
             ->get();
 
-        // ==========================
-        // PROGRAM AKTIF
-        // ==========================
         $programAktif = ProgramDonasi::where('status_program','aktif')
             ->limit(5)
             ->get();
 
-        // ==========================
-        // RINGKASAN
-        // ==========================
         $donasiSukses  = Donasi::whereIn('status_donasi',['sukses','berhasil'])->count();
         $donasiPending = Donasi::where('status_donasi','pending')->count();
         $donasiGagal   = Donasi::where('status_donasi','gagal')->count();
 
-        // ==========================
-        // DONASI BULANAN (CHART)
-        // ==========================
         $donasiBulanan = Donasi::select(
                 DB::raw("DATE_FORMAT(tanggal_donasi,'%Y-%m') as bulan"),
                 DB::raw("SUM(jumlah_donasi) as total")
@@ -58,9 +43,6 @@ class DashboardController extends Controller
             ->orderBy('bulan')
             ->get();
 
-        // ==========================
-        // PROGRESS PROGRAM
-        // ==========================
         $progressProgram = ProgramDonasi::withSum(
                 ['donasi as total_terkumpul' => function ($q) {
                     $q->whereIn('status_donasi',['sukses','berhasil']);
@@ -69,9 +51,6 @@ class DashboardController extends Controller
             )
             ->get();
 
-        // ==========================
-        // TOTAL DONASI PER PROGRAM
-        // ==========================
         $totalPerProgram = ProgramDonasi::withSum(
                 ['donasi as total_donasi' => function ($q) {
                     $q->whereIn('status_donasi',['sukses','berhasil']);

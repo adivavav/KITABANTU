@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /* =========================
-       VIEW
-    ========================== */
     public function index()
     {
         $users = User::orderByDesc('id')->get();
@@ -19,9 +16,6 @@ class UserController extends Controller
         return view('admin.users', compact('users'));
     }
 
-    /* =========================
-       STORE
-    ========================== */
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -39,9 +33,6 @@ class UserController extends Controller
             ->with('success', 'User berhasil ditambahkan');
     }
 
-    /* =========================
-       UPDATE
-    ========================== */
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
@@ -65,9 +56,6 @@ class UserController extends Controller
             ->with('success', 'User berhasil diupdate');
     }
 
-    /* =========================
-       DELETE
-    ========================== */
     public function destroy($id)
 {
     $user = User::findOrFail($id);

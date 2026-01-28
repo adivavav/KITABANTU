@@ -21,8 +21,6 @@ class ProgramDonasi extends Model
         'foto'
     ];
 
-
-    // 🔥 RELASI KE DONASI (INI KUNCI ERROR KAMU)
     public function donasi()
     {
         return $this->hasMany(
@@ -30,5 +28,10 @@ class ProgramDonasi extends Model
             'id_program',
             'id_program'
         );
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

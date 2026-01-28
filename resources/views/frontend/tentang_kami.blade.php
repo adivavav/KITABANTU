@@ -4,7 +4,6 @@
 
 @push('styles')
 <style>
-  /* HERO */
   .about-hero {
     position: relative;
     border-radius: 14px;
@@ -41,9 +40,8 @@
     text-shadow: 0 8px 30px rgba(0,0,0,.35);
   }
 
-  /* CONTENT */
   .about-wrap {
-    margin-top: -35px; /* biar naik dikit seperti contoh */
+    margin-top: -35px; 
   }
 
   .about-card {
@@ -66,7 +64,6 @@
     display:block;
   }
 
-  /* Visi/Misi */
   .vm-card {
     border-radius: 14px;
     border: 1px solid rgba(0,0,0,.05);
@@ -81,7 +78,6 @@
   }
   .vm-title i { color:#0D6EFD; }
 
-  /* responsive */
   @media (max-width: 576px){
     .about-hero img { height: 210px; }
     .about-hero .hero-content h1 { font-size: 22px; }

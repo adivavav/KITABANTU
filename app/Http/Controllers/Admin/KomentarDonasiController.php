@@ -9,14 +9,12 @@ use Illuminate\Http\Request;
 
 class KomentarDonasiController extends Controller
 {
-    // HALAMAN
     public function index()
     {
         $donasi = Donasi::orderByDesc('id_donasi')->get();
         return view('admin.komentar_donasi', compact('donasi'));
     }
 
-    // DATA (AJAX)
     public function data(Request $request)
     {
         $q = trim((string) $request->query('q', ''));
@@ -35,7 +33,6 @@ class KomentarDonasiController extends Controller
         return response()->json($query->paginate(10));
     }
 
-    // TAMBAH
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -51,7 +48,6 @@ class KomentarDonasiController extends Controller
         return response()->json(['message' => 'Komentar berhasil ditambahkan']);
     }
 
-    // EDIT
     public function update(Request $request, $id)
     {
         $row = KomentarDonasi::findOrFail($id);
@@ -66,7 +62,6 @@ class KomentarDonasiController extends Controller
         return response()->json(['message' => 'Komentar berhasil diperbarui']);
     }
 
-    // HAPUS
     public function destroy($id)
     {
         KomentarDonasi::findOrFail($id)->delete();

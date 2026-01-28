@@ -92,11 +92,9 @@
 <script>
 let page = 1, lastPage = 1;
 
-// ===== URL (INI KUNCI) =====
 const BASE_DATA = '/admin/program/data';
 const BASE_CRUD = '/admin/program';
 
-// ===== CSRF =====
 function token(){
   return document.querySelector('meta[name=csrf-token]').content;
 }
@@ -109,9 +107,6 @@ function req(url, opt = {}) {
   return fetch(url, opt);
 }
 
-/* =========================
-   MODAL TAMBAH
-========================= */
 function openCreate(){
   modalTitle.innerText = 'Tambah Program';
   id_program.value = '';
@@ -126,9 +121,6 @@ function openCreate(){
   $('#modalForm').modal('show');
 }
 
-/* =========================
-   MODAL EDIT
-========================= */
 async function openEdit(id){
   const r = await req(`${BASE_CRUD}/${id}`);
   const d = await r.json();
@@ -150,9 +142,6 @@ async function openEdit(id){
   $('#modalForm').modal('show');
 }
 
-/* =========================
-   SIMPAN (TAMBAH & EDIT)
-========================= */
 async function save(){
   const fd = new FormData();
   ['nama_program','deskripsi','target_dana','tanggal_mulai','tanggal_selesai','status_program']
@@ -176,18 +165,12 @@ async function save(){
   load();
 }
 
-/* =========================
-   HAPUS
-========================= */
 async function del(id){
   if(!confirm('Hapus program ini?')) return;
   await req(`${BASE_CRUD}/${id}`, { method:'DELETE' });
   load();
 }
 
-/* =========================
-   LOAD DATA
-========================= */
 async function load(p = 1){
   page = p;
   const url = new URL(BASE_DATA, location.origin);
@@ -227,7 +210,6 @@ async function load(p = 1){
 function prevPage(){ if(page > 1) load(page - 1); }
 function nextPage(){ if(page < lastPage) load(page + 1); }
 
-// LOAD AWAL
 load();
 </script>
 

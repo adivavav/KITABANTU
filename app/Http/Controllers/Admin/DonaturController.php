@@ -9,11 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class DonaturController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | LIST DONATUR
-    |--------------------------------------------------------------------------
-    */
     public function index(Request $request)
     {
         $q = $request->query('q');
@@ -30,11 +25,6 @@ class DonaturController extends Controller
         return view('admin.donatur', compact('donatur', 'q'));
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | SIMPAN DONATUR
-    |--------------------------------------------------------------------------
-    */
 public function store(Request $request)
 {
     $data = $request->validate([
@@ -53,12 +43,6 @@ public function store(Request $request)
         ->with('success', 'Donatur berhasil ditambahkan');
 }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | UPDATE DONATUR
-    |--------------------------------------------------------------------------
-    */
     public function update(Request $request, $id)
     {
         $donatur = Donatur::findOrFail($id);
@@ -77,11 +61,6 @@ public function store(Request $request)
             ->with('success', 'Donatur berhasil diperbarui');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | HAPUS DONATUR
-    |--------------------------------------------------------------------------
-    */
     public function destroy($id)
     {
         Donatur::findOrFail($id)->delete();

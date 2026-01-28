@@ -44,29 +44,35 @@ Route::post('/logout', [UserAuthController::class, 'logout'])->name('user.logout
 */
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\UserProgramDonasiController;
-use App\Http\Controllers\DonasiController; // FRONTEND
+use App\Http\Controllers\DonasiController; 
 
 
 Route::middleware('auth')->group(function () {
 
-    // PROFIL USER
     Route::get('/profil', [UserProfileController::class, 'index'])->name('user.profile');
     Route::post('/profil', [UserProfileController::class, 'update'])->name('user.profile.update');
     Route::post('/profil/foto', [UserProfileController::class, 'updatePhoto'])->name('user.profile.photo');
 
-    // PROGRAM DONASI USER
-    Route::get('/program-donasi/buat', [UserProgramDonasiController::class, 'create'])
-        ->name('user.program_donasi.create');
-    Route::post('/program-donasi/store', [UserProgramDonasiController::class, 'store'])
-        ->name('user.program_donasi.store');
+    Route::middleware('auth')->group(function () {
 
-    Route::get('/riwayat-program-donasi', [UserProgramDonasiController::class, 'riwayat'])
-        ->name('user.program_donasi.riwayat');
+    Route::get('/user/program/create',
+        [UserProgramDonasiController::class, 'create']
+    )->name('user.program_donasi.create');
+
+    Route::post('/user/program/store',
+        [UserProgramDonasiController::class, 'store']
+    )->name('user.program_donasi.store');
+
+   Route::get('/riwayat-program-donasi',
+    [UserProgramDonasiController::class, 'riwayat']
+)->middleware('auth')
+ ->name('user.program_donasi.riwayat');
+
+});
 
     Route::get('/riwayat-donasi', [FrontendController::class, 'riwayatDonasi'])
         ->name('riwayat.donasi');
 
-    // STRUK DONASI
     Route::get('/donasi/struk/{id}', [DonasiController::class, 'struk'])
         ->name('donasi.struk');
 });
@@ -108,7 +114,6 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
 
     Route::get('/', fn () => redirect('/admin/dashboard'))->name('admin.root');
 
-    // DASHBOARD
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('admin.dashboard');
 
@@ -116,15 +121,6 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
     Route::get('/donatur', [DonaturController::class, 'index'])->name('admin.donatur');
     Route::get('/program', [ProgramDonasiController::class, 'index'])->name('admin.program');
 
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | MASTER DATA (CRUD WEB)
-    |--------------------------------------------------------------------------
-    */
-
-    // ADMIN
     Route::get('/admin', [AdminController::class, 'index'])
         ->name('admin.admin');
 
@@ -137,7 +133,6 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
     Route::delete('/admin/{id}', [AdminController::class, 'destroy'])
         ->name('admin.admin.destroy');
 
-        // USERS (ADMIN)
    Route::get('/users', [UserController::class, 'index'])
         ->name('admin.users');
 
@@ -150,9 +145,6 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
     Route::delete('/users/{id}', [UserController::class, 'destroy'])
         ->name('admin.users.destroy');
 
-
-
-    // DONATUR
      Route::get('/donatur', [DonaturController::class, 'index'])
         ->name('admin.donatur');
 
@@ -165,21 +157,16 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
     Route::delete('/donatur/{id}', [DonaturController::class, 'destroy'])
         ->name('admin.donatur.destroy');
 
-    // PROGRAM DONASI
      Route::get('/program', function () {
         return view('admin.program');
     })->name('admin.program');
 
-    // ======================
-    // DATA (AJAX / JSON)
-    // ======================
     Route::get('/program/data', [ProgramDonasiController::class, 'index']);
     Route::get('/program/{id}', [ProgramDonasiController::class, 'show']);
     Route::post('/program', [ProgramDonasiController::class, 'store']);
     Route::post('/program/{id}', [ProgramDonasiController::class, 'update']);
     Route::delete('/program/{id}', [ProgramDonasiController::class, 'destroy']);
 
-    //donasi
       Route::get('/donasi', [AdminDonasiController::class, 'index'])
         ->name('admin.donasi');
 
@@ -193,8 +180,6 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
 
     Route::delete('/donasi/{id}', [AdminDonasiController::class, 'destroy']);
 
-
-    // KOMENTAR
     Route::get('/komentar', [KomentarDonasiController::class, 'index'])
         ->name('admin.komentar');
 
@@ -206,7 +191,6 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
 
     Route::delete('/komentar/{id}', [KomentarDonasiController::class, 'destroy']);
 
-    //transaksi pembayaran
     Route::get('/transaksi-pembayaran', [TransaksiPembayaranController::class,'index'])
     ->name('admin.transaksi_pembayaran');
 
@@ -222,9 +206,6 @@ Route::post('/transaksi-pembayaran/konfirmasi/{id_donasi}',
     [TransaksiPembayaranController::class,'konfirmasi'])
     ->name('admin.transaksi.konfirmasi');
 
-    // METODE PEMBAYARAN
-    
-
     Route::get('/metode', [MetodePembayaranController::class,'index'])
         ->name('admin.metode');
 
@@ -237,7 +218,6 @@ Route::post('/transaksi-pembayaran/konfirmasi/{id_donasi}',
     Route::delete('/metode/{id}', [MetodePembayaranController::class,'destroy'])
         ->name('admin.metode.destroy');
 
-    // admin profile
     Route::get('/users', [UserController::class, 'index'])->name('admin.users');
 
     Route::get('/profile', [AdminProfileController::class, 'edit'])
